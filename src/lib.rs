@@ -2,23 +2,27 @@ pub mod config {
     pub struct Config {
         pub width: i32,
         pub height: i32,
-        pub file_path: String,
+        pub file_paths: Vec<String>,
     }
 
     impl Config {
         pub fn build(args: &[String]) -> Result<Config, &'static str> {
             if args.len() < 2 {
-                return Err("not enugh arguments");
+                return Err("need atleast one csv file");
             }
 
             let width = 1000;
             let height = 400;
-            let file_path = args[1].clone();
+
+            let mut file_paths: Vec<String> = Vec::new();
+            for i in 1..(args.len()) {
+                file_paths.push(args[i].clone());
+            }
 
             Ok(Config {
                 width,
                 height,
-                file_path,
+                file_paths,
             })
         }
     }
@@ -34,21 +38,23 @@ pub mod question {
     }
 
     impl QuestionT {
-        pub fn new(file_path: &str) -> Vec<QuestionT> {
+        pub fn new(file_paths: &Vec<String>) -> Vec<QuestionT> {
             let mut questions: Vec<QuestionT> = Vec::new();
 
-            let mut rdr = ReaderBuilder::new()
-                .delimiter(b';')
-                .from_path(file_path)
-                .unwrap();
+            for path in file_paths {
+                let mut rdr = ReaderBuilder::new()
+                    .delimiter(b';')
+                    .from_path(path)
+                    .unwrap();
 
-            for result in rdr.records() {
-                if let Ok(record) = result {
-                    if let Some(question) = Self::parse_record(record) {
-                        questions.push(question);
+                for result in rdr.records() {
+                    if let Ok(record) = result {
+                        if let Some(question) = Self::parse_record(record) {
+                            questions.push(question);
+                        }
                     }
                 }
-            }
+                }
 
             questions
         }

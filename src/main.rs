@@ -5,6 +5,7 @@ use raylib::prelude::*;
 use std::env;
 use std::process;
 
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     let config = Config::build(&args).unwrap_or_else(|err| {
@@ -13,7 +14,11 @@ fn main() {
     });
 
     let mut questions: Vec<question::QuestionT>;
-    questions = question::QuestionT::new(&config.file_path);
+    questions = question::QuestionT::new(&config.file_paths);
+
+    if questions.is_empty() {
+        panic!("Could not generate any questions from files");
+    }
 
     let (mut raylib_handle, raylib_thread) = raylib::init()
         .size(config.width, config.height)
@@ -30,18 +35,17 @@ fn run(
     raylib_thread: RaylibThread,
     questions: &mut Vec<question::QuestionT>,
     config: Config,
-) {
+){
     let mut show_answer = false;
-    let mut i = 0;
     let mut all_easy = false;
     let color_darkred: Color = Color::from_hex("8b0000").unwrap();
+    let mut i: usize = 0;
 
     while !raylib_handle.window_should_close() {
         let mouse_point = raylib_handle.get_mouse_position();
 
         let mut d = raylib_handle.begin_drawing(&raylib_thread);
 
-        //clearing background
         d.clear_background(Color::RAYWHITE);
 
         // Draw text
@@ -123,7 +127,6 @@ fn run(
         if all_easy {
             let prompt = "All questions answered, again? [Y/N]";
             d.draw_rectangle(0, 0, config.width, config.height, Color::LIGHTGRAY);
-            println!("{}", (config.width - measure_text(prompt, 10)) / 2);
             d.draw_text(
                 prompt,
                 (config.width - measure_text(prompt, 30)) / 2,
