@@ -1,0 +1,7 @@
+Question;Answer
+What are threads?;Threads are lightweight processes that consist of a program counter, a register set for thread-local variables, a stack and a state.
+What are the advantages of threads?;Threads allow multiple tasks to run concurrently in a program, share memory and resources of their process, and facilitate communication between different tasks.
+What are kernel threads?;Kernel threads are managed in the kernel's thread table, utilize the operating system's scheduling, and allow blocked threads to not interfere with the execution of other threads.
+What are user threads?;User threads are managed in the process's thread table, the programmers are responsible for scheduling, they are faster as the kernel is not involved, but if a thread is blocked, the whole process is stopped.
+Why is synchronization important? Synchronization is important to avoid inconsistencies when multiple processes access shared data at the same time and to ensure that interdependent processes are coordinated and executed properly.
+What are critical sections?;Critical sections are parts of the program where shared data is accessed and where synchronization is required to avoid conflicts between processes competing for these resources.
